@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>uikit demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.15.3/dist/css/uikit.min.css" />
+</head>
+<body>
+
+<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
+    <h3 class="uk-card-title">Welcome to chat!</h3>
+    <p>Please type nickname and room id</p>
+    <div class="uk-margin">
+        <input id="nickname" class="uk-input uk-form-width-medium" type="text" placeholder="nickname">
+        <br/>
+        <br />
+        <input id="roomid" class="uk-input uk-form-width-medium" type="text" placeholder="room id">
+    </div>
+    <button id="joinbtn" class="uk-button uk-button-default uk-button-small">Join Chat</button>
+</div>
+
+<script>
+    var nickname = document.getElementById('nickname');
+    var roomid = document.getElementById('roomid');
+    var joinbtn = document.getElementById('joinbtn');
+    joinbtn.onclick = (event) => {
+            event.preventDefault();
+            location.replace(`http://localhost:9000/chat?nickname=${nickname.value}&roomid=${roomid.value}`)
+        }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.3/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.3/dist/js/uikit-icons.min.js"></script>
+</body>
+</html>
