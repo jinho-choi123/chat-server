@@ -4,7 +4,9 @@ import { Server } from "socket.io";
 import path from 'path';
 import cors from 'cors';
 import {Chat, Message} from './model/ChatModel.js'
-
+import passport from './auth/Oauth.js'
+import session from 'express-session';
+import 'dotenv/config';
 
 const __dirname = path.resolve()
 const port = 9000
@@ -18,6 +20,21 @@ const io = new Server(httpServer, {
 });
 
 app.use(cors())
+app.use(session({
+    secret: process.env.SESSION_SECRETS, 
+    resave: true,
+    saveUninitialized: true,
+}))
+app.use(passport.initialize())
+app.use(passport.session());
+app.get('/auth/google', passport.authenticate('google', {scope: ['profile']}))
+
+app.get('/auth/google/callback', 
+    passport.authenticate('google', {failureRedirect: '/login'}),
+    (req, res) => {
+        res.redirect('/')
+    }
+)
 
 app.get('/chatlog', (req, res) => {
     const roomId = req.query.roomId 

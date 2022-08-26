@@ -1,7 +1,18 @@
-import qs from 'qs';
-import 'dotenv/config'
+import 'dotenv/config';
+import passport from 'passport';
+import User from '../model/UserModel.js'
+import GoogleStrategy from 'passport-google-oauth20';
 
-const queryStr = qs.stringify({
-    client_id: process.env.GOOGLE_OAUTH_CLIENTID,
-    
-})
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_OAUTH_CLIENTID,
+    clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback"
+    },
+    (accessToken, refreshToken, profile, cb) => {
+        User.findOrCreate({googleId: profile.id}, (err, user) => {
+            return cb(err, user)
+        })
+    }
+))
+
+export default passport
