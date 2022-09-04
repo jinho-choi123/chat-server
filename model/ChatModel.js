@@ -1,7 +1,7 @@
 import mongoose from './db.js';
 
 const MessageSchema = new mongoose.Schema({
-    author: {type: String, required: true}, 
+    authorId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}, 
     message: {type: String, required: true}, 
     timestamp: {type: Date, required: true},
 })

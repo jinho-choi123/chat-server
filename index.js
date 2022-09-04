@@ -3,10 +3,11 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import path from 'path';
 import cors from 'cors';
-import {Chat, Message} from './model/ChatModel.js'
-import passport from './auth/Oauth.js'
-import session from 'express-session';
+import expressSession from 'express-session';
+import passport from 'passport'
 import 'dotenv/config';
+import authRouter from './routes/auth.js';
+import chatRouter from './routes/chat.js'
 
 const __dirname = path.resolve()
 const port = 9000
@@ -20,55 +21,20 @@ const io = new Server(httpServer, {
 });
 
 app.use(cors())
-app.use(session({
-    secret: process.env.SESSION_SECRETS, 
-    resave: true,
-    saveUninitialized: true,
-}))
-app.use(passport.initialize())
+app.use(expressSession({
+    secret: process.env.SESSION_SECRETS,
+    cookie: {
+        maxAge: 2*60*60*1000
+    },
+    name: "chatSession"
+}));
+
+//initialize passport
+app.use(passport.initialize());
 app.use(passport.session());
-app.get('/auth/google', passport.authenticate('google', {scope: ['profile']}))
 
-app.get('/auth/google/callback', 
-    passport.authenticate('google', {failureRedirect: '/login'}),
-    (req, res) => {
-        res.redirect('/')
-    }
-)
-
-app.get('/chatlog', (req, res) => {
-    const roomId = req.query.roomId 
-    Chat.findOne({roomId: roomId})
-        .then((data) => {
-            if(data === null) {
-                res.send([])
-            }
-            else {
-                const chatLog = data.chatLog;
-                Message.find({
-                    _id: {
-                        $in: chatLog
-                    }
-                })
-                .then((data) => {
-                    if (data === null) {
-                        res.send([])
-                    }
-                    else {
-                        res.send(data)
-                    }
-                })
-                .catch((err) => {
-                    res.send(err)
-                })
-            }
-
-        })
-        .catch((err) => {
-            res.send(err)
-        })
-    
-})
+app.use('/auth', authRouter)
+app.use('/chat', chatRouter)
 
 
 io.on('connection', (socket) => {
