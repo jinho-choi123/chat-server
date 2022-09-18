@@ -16,17 +16,22 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:3000"
     }
 });
 
-app.use(cors())
+app.use(cors(
+    {
+        origin: 'http://localhost:3000',
+        credentials: true,
+}
+))
 app.use(expressSession({
     secret: process.env.SESSION_SECRETS,
     cookie: {
         maxAge: 2*60*60*1000
     },
-    name: "chatSession"
+    name: 'chatSession'
 }));
 
 //initialize passport
