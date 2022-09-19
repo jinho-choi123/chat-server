@@ -23,7 +23,7 @@ passport.use(
     //options for google strategy
     clientID: process.env.GOOGLE_OAUTH_CLIENTID,
     clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-    callbackURL: "http://localhost:9000/auth/google/redirect",
+    callbackURL: "http://localhost:3000/api/auth/google/redirect",
     }, (accessToken, refreshToken, profile, done) => {
         console.log('passport callback function fired')
         //passport callback function 

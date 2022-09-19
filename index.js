@@ -14,18 +14,8 @@ const port = 9000
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    cors: {
-        origin: "http://localhost:3000"
-    }
-});
+const io = new Server(httpServer);
 
-app.use(cors(
-    {
-        origin: 'http://localhost:3000',
-        credentials: true,
-}
-))
 app.use(expressSession({
     secret: process.env.SESSION_SECRETS,
     cookie: {
@@ -37,6 +27,11 @@ app.use(expressSession({
 //initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.get('/checkserver', (req, res) => {
+    console.log("got request")
+    res.send("Server is running!!!!!!!!!!!!!!!!!!!!!")
+})
 
 app.use('/auth', authRouter)
 app.use('/chat', chatRouter)
@@ -91,8 +86,6 @@ io.on('connection', (socket) => {
             })
     })
 })
-
-
 
 httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
